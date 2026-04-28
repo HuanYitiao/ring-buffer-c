@@ -37,3 +37,9 @@ bool rb_init(RingBuffer *rb, uint8_t *buf, uint32_t capacity,
 
   return true;
 }
+
+/* ── Utility ── */
+void rb_clear(RingBuffer *rb) {
+  rb->head = 0;
+  rb->tail = 0;
+}
