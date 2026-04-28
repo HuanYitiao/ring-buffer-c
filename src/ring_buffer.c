@@ -60,3 +60,12 @@ bool rb_push(RingBuffer *rb, uint8_t data) {
 
   return true;
 }
+
+bool rb_pop(RingBuffer *rb, uint8_t *data) {
+  if (rb_is_empty(rb)) {
+    return false;
+  }
+  *data = rb->buf[rb->head & (rb->capacity - 1)];
+  rb->head++;
+  return true;
+}

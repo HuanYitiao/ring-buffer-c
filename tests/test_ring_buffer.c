@@ -8,6 +8,7 @@ static RingBuffer rb_reject;
 static RingBuffer rb_overwrite;
 static uint8_t buf[BUFFER_CAPACITY];
 static uint8_t buf_reject[BUFFER_CAPACITY];
+static uint8_t buf_overwrite[BUFFER_CAPACITY];
 
 void setUp(void) { rb_init(&rb, buf, BUFFER_CAPACITY, RB_MODE_REJECT); }
 
@@ -32,10 +33,27 @@ void test_rb_push_reject_when_full(void) {
   TEST_ASSERT_FALSE(rb_push(&rb_reject, 2));
 }
 
+void test_rb_push_overwrite_when_full(void) {
+  rb_init(&rb_overwrite, buf_overwrite, BUFFER_CAPACITY, RB_MODE_OVERWRITE);
+  for (int i = 0; i < BUFFER_CAPACITY; i++) {
+    rb_push(&rb_overwrite, 1);
+  }
+  TEST_ASSERT_TRUE(rb_push(&rb_overwrite, 2));
+  uint8_t val;
+  rb_pop(&rb_overwrite, &val);
+  TEST_ASSERT_EQUAL_UINT8(1, val);
+  for (int i = 0; i < BUFFER_CAPACITY - 2; i++) {
+    rb_pop(&rb_overwrite, &val);
+  }
+  rb_pop(&rb_overwrite, &val);
+  TEST_ASSERT_EQUAL_UINT8(2, val);
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_init_state);
   RUN_TEST(test_rb_push);
   RUN_TEST(test_rb_push_reject_when_full);
+  RUN_TEST(test_rb_push_overwrite_when_full);
   return UNITY_END();
 }
