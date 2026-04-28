@@ -69,3 +69,11 @@ bool rb_pop(RingBuffer *rb, uint8_t *data) {
   rb->head++;
   return true;
 }
+
+bool rb_peek(const RingBuffer *rb, uint8_t *data) {
+  if (rb_is_empty(rb)) {
+    return false;
+  }
+  *data = rb->buf[rb->head & (rb->capacity - 1)];
+  return true;
+}

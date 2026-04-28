@@ -49,11 +49,21 @@ void test_rb_push_overwrite_when_full(void) {
   TEST_ASSERT_EQUAL_UINT8(2, val);
 }
 
+void test_rb_peek_test(void) {
+  rb_init(&rb, buf, BUFFER_CAPACITY, RB_MODE_REJECT);
+  rb_push(&rb, 1);
+  uint8_t val;
+  rb_peek(&rb, &val);
+  TEST_ASSERT_EQUAL_UINT8(1, val);
+  TEST_ASSERT_EQUAL_UINT8(1, rb_size(&rb));
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_init_state);
   RUN_TEST(test_rb_push);
   RUN_TEST(test_rb_push_reject_when_full);
   RUN_TEST(test_rb_push_overwrite_when_full);
+  RUN_TEST(test_rb_peek_test);
   return UNITY_END();
 }
