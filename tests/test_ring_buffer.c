@@ -69,6 +69,18 @@ void test_rb_bulk_write_read(void) {
   TEST_ASSERT_EQUAL_UINT8_ARRAY(src, src_read, BUFFER_CAPACITY);
 }
 
+void test_rb_init_null_rb(void) {
+  TEST_ASSERT_FALSE(rb_init(NULL, buf, BUFFER_CAPACITY, RB_MODE_REJECT));
+}
+
+void test_rb_init_null_buf(void) {
+  TEST_ASSERT_FALSE(rb_init(&rb, NULL, BUFFER_CAPACITY, RB_MODE_REJECT));
+}
+
+void test_rb_init_invalid_capacity(void) {
+  TEST_ASSERT_FALSE(rb_init(&rb, buf, 7, RB_MODE_REJECT));
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_init_state);
@@ -77,5 +89,8 @@ int main(void) {
   RUN_TEST(test_rb_push_overwrite_when_full);
   RUN_TEST(test_rb_peek_test);
   RUN_TEST(test_rb_bulk_write_read);
+  RUN_TEST(test_rb_init_null_rb);
+  RUN_TEST(test_rb_init_null_buf);
+  RUN_TEST(test_rb_init_invalid_capacity);
   return UNITY_END();
 }
