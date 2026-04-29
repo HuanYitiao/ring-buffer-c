@@ -43,3 +43,37 @@ void rb_clear(RingBuffer *rb) {
   rb->head = 0;
   rb->tail = 0;
 }
+
+/* ── Single Byte Operations ── */
+bool rb_push(RingBuffer *rb, uint8_t data) {
+  if (rb_is_full(rb)) {
+    if (rb->mode == RB_MODE_REJECT) {
+      return false;
+    }
+    if (rb->mode == RB_MODE_OVERWRITE) {
+      rb->head++;
+    }
+  }
+
+  rb->buf[rb->tail & (rb->capacity - 1)] = data;
+  rb->tail++;
+
+  return true;
+}
+
+bool rb_pop(RingBuffer *rb, uint8_t *data) {
+  if (rb_is_empty(rb)) {
+    return false;
+  }
+  *data = rb->buf[rb->head & (rb->capacity - 1)];
+  rb->head++;
+  return true;
+}
+
+bool rb_peek(const RingBuffer *rb, uint8_t *data) {
+  if (rb_is_empty(rb)) {
+    return false;
+  }
+  *data = rb->buf[rb->head & (rb->capacity - 1)];
+  return true;
+}
