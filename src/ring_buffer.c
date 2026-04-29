@@ -77,3 +77,25 @@ bool rb_peek(const RingBuffer *rb, uint8_t *data) {
   *data = rb->buf[rb->head & (rb->capacity - 1)];
   return true;
 }
+
+/* ── Bulk Operations ── */
+uint32_t rb_write(RingBuffer *rb, const uint8_t *src, uint32_t len) {
+  for (uint32_t i = 0; i < len; i++) {
+    if (!rb_push(rb, src[i])) {
+      return i;
+    }
+  }
+  return len;
+}
+
+uint32_t rb_read(RingBuffer *rb, uint8_t *dst, uint32_t len) {
+  for (uint32_t i = 0; i < len; i++) {
+    uint8_t val;
+    bool res = rb_pop(rb, &val);
+    if (!res) {
+      return i;
+    }
+    dst[i] = val;
+  }
+  return len;
+}
