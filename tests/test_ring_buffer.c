@@ -6,9 +6,13 @@
 static RingBuffer rb;
 static RingBuffer rb_reject;
 static RingBuffer rb_overwrite;
+static RingBuffer rb_bulk;
 static uint8_t buf[BUFFER_CAPACITY];
 static uint8_t buf_reject[BUFFER_CAPACITY];
 static uint8_t buf_overwrite[BUFFER_CAPACITY];
+static uint8_t buf_bulk[BUFFER_CAPACITY];
+static uint8_t src[BUFFER_CAPACITY] = {1, 2, 3, 4, 5, 6, 7, 8};
+static uint8_t src_read[BUFFER_CAPACITY];
 
 void setUp(void) { rb_init(&rb, buf, BUFFER_CAPACITY, RB_MODE_REJECT); }
 
@@ -58,6 +62,13 @@ void test_rb_peek_test(void) {
   TEST_ASSERT_EQUAL_UINT8(1, rb_size(&rb));
 }
 
+void test_rb_bulk_write_read(void) {
+  rb_init(&rb_bulk, buf_bulk, BUFFER_CAPACITY, RB_MODE_REJECT);
+  rb_write(&rb_bulk, src, BUFFER_CAPACITY);
+  rb_read(&rb_bulk, src_read, BUFFER_CAPACITY);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(src, src_read, BUFFER_CAPACITY);
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_init_state);
@@ -65,5 +76,6 @@ int main(void) {
   RUN_TEST(test_rb_push_reject_when_full);
   RUN_TEST(test_rb_push_overwrite_when_full);
   RUN_TEST(test_rb_peek_test);
+  RUN_TEST(test_rb_bulk_write_read);
   return UNITY_END();
 }
